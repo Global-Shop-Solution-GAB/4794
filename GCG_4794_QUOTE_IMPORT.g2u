@@ -1,0 +1,577 @@
+Program.Sub.ScreenSU.Start
+Gui.FormFile..Create
+Gui.FormFile..Caption("Selection")
+Gui.FormFile..Size(4095,2610)
+Gui.FormFile..MinX(0)
+Gui.FormFile..MinY(0)
+Gui.FormFile..Position(0,0)
+Gui.FormFile..BackColor(-2147483633)
+Gui.FormFile..MaxButton(False)
+Gui.FormFile..MinButton(False)
+Gui.FormFile..MousePointer(0)
+Gui.FormFile..Sizeable(False)
+Gui.FormFile..Event(UnLoad,FormFile_UnLoad)
+Gui.FormFile.cmdBrwFile.Create(Button)
+Gui.FormFile.cmdBrwFile.Size(375,375)
+Gui.FormFile.cmdBrwFile.Position(3285,660)
+Gui.FormFile.cmdBrwFile.Caption("^")
+Gui.FormFile.cmdBrwFile.Event(Click,cmdBrwFile_Click)
+Gui.FormFile.txtFile.Create(TextBox,"",True,3090,300,0,150,705,True,0,"Arial",8,-2147483643,1)
+Gui.FormFile.lblFile.Create(Label,"Select File to Upload",True,2925,255,0,150,480,True,0,"Arial",8,-2147483633,0)
+Gui.FormFile.cmdOK.Create(Button)
+Gui.FormFile.cmdOK.Size(855,375)
+Gui.FormFile.cmdOK.Position(645,1335)
+Gui.FormFile.cmdOK.Caption("OK")
+Gui.FormFile.cmdOK.Event(Click,cmdOK_Click)
+Gui.FormFile.cmdCancel.Create(Button)
+Gui.FormFile.cmdCancel.Size(855,375)
+Gui.FormFile.cmdCancel.Position(2265,1335)
+Gui.FormFile.cmdCancel.Caption("Cancel")
+Gui.FormFile.cmdCancel.Event(Click,cmdCancel_Click)
+Program.Sub.ScreenSU.End
+Program.Sub.Preflight.Start
+Variable.Global.sFileList.Declare(String)
+Variable.Global.sFile.Declare(String)
+Variable.Global.sFilePaths.Declare(String)
+Variable.Global.sSource.Declare(String)
+Variable.Global.sSheet.Declare(String)
+Variable.Global.sData.Declare(String)
+Variable.Global.sFieldOrder.Declare(String)
+Variable.Global.sSearch.Declare(String)
+'Program.External.Include.Library("251000.lib")
+Program.External.Include.Library("GCG_4794_ORDUPL.lib")
+Program.Sub.Preflight.End
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+f.ODBC.Connection!conx.openconnection(v.Ambient.PDSN,v.Ambient.PUser,v.Ambient.PPass)
+
+gui.FormFile..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.Main.End
+Program.Sub.FormFile_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+F.ODBC.Connection!conx.Close
+f.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.FormFile_UnLoad.End
+Program.Sub.cmdBrwFile_Click.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError,sRet,sFile)
+
+F.Intrinsic.UI.ShowOpenFileDialog("","","",V.Local.sFIle)
+F.Intrinsic.Control.If(V.Local.sfile,<>,"***CANCEL***")
+	gui.FormFile.txtFile.Text(v.Local.sFile)
+F.Intrinsic.Control.endif
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdBrwFile_Click.End
+Program.Sub.cmdCancel_Click.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+f.Intrinsic.Control.CallSub(FormFile_Unload)
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdCancel_Click.End
+Program.Sub.cmdOK_Click.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+gui.FormFile..Visible(False)
+
+F.Intrinsic.UI.InvokeWaitDialog("Parsing file data.....")
+'check the params file
+f.Intrinsic.Control.CallSub(check_paramstxt)
+Function.Intrinsic.Control.CallSub(get_file)
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdOK_Click.End
+Program.Sub.check_paramstxt.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sError,sFile,sRet)
+v.Local..BulkDeclareBoolean(bExists)
+
+'Check to make sure they have a GSSParamccc.txt or GSSParam.txt file before moving forward.
+f.Intrinsic.String.Build("{0}\GSSPARAM{1}.txt",v.Caller.FilesDir,v.Caller.CompanyCode,v.Local.sFile)
+f.Intrinsic.File.Exists(v.Local.sFile,v.Local.bExists)
+f.Intrinsic.Control.If(v.Local.bExists,=,False)
+    'We don't have a GSSParamccc.txt so lets see if we have a generic.
+    f.Intrinsic.String.Build("{0}\GSSPARAM.txt",v.Caller.FilesDir,v.Local.sFile)
+    f.Intrinsic.File.Exists(v.Local.sFile,v.Local.bExists)
+    f.Intrinsic.Control.If(v.Local.bExists,=,False)
+        'We don't have a generic so create it.
+        f.Intrinsic.String.Build("WEB ORDER DIRECTORY   = {0}\WEB_ORDERS{1}WEB ERROR DIRECTORY   = {0}\WEB_ORDERS\WEB_ERRORS{1}WEB CONVERTED DIR     = {0}\WEB_ORDERS\CONVERTED{1}WEB UPLOADED DIRECTORY= {0}\WEB_ORDERS\UPLOADED{1}EMAIL FROM ADDRESS    = {1}EMAIL TO ADDRESS      = ",v.Caller.FilesDir,v.Ambient.NewLine,v.Local.sRet)
+        f.Intrinsic.File.String2File(v.Local.sFile,v.Local.sRet)
+        'Now create the directories
+        f.Intrinsic.String.Build("{0}\WEB_ORDERS",v.Caller.FilesDir,V.Local.sFile)
+        f.Intrinsic.File.CreateDir(V.Local.sFile)
+        f.Intrinsic.String.Build("{0}\WEB_ORDERS\WEB_ERRORS",v.Caller.FilesDir,V.Local.sFile)
+        f.Intrinsic.File.CreateDir(V.Local.sFile)
+        f.Intrinsic.String.Build("{0}\WEB_ORDERS\CONVERTED",v.Caller.FilesDir,V.Local.sFile)
+        f.Intrinsic.File.CreateDir(V.Local.sFile)
+        f.Intrinsic.String.Build("{0}\WEB_ORDERS\UPLOADED",v.Caller.FilesDir,V.Local.sFile)
+        f.Intrinsic.File.CreateDir(V.Local.sFile)
+    f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.check_paramstxt.End
+Program.Sub.get_file.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+v.Local..BulkDeclareString(sError,sPath,sFile,sSheets)
+v.Local..BulkDeclareLong(iCount,iRow)
+
+
+'get the filename to upload
+v.Local.sFile.Set(v.Screen.FormFile!txtFile.Text)
+'process down to a set of rows
+f.Automation.MSExcel.ReadSpreadsheet(v.Local.sFile,v.Global.sFile)
+f.Intrinsic.String.Split(v.Global.sFile,"&^&",v.Local.sSheets)
+f.Intrinsic.String.Split(v.Local.sSheets,"$!$",v.Global.sSheet)
+'now we are at an array of rows and can start adding records to the lib datatables
+
+'create a global filename to be used for the export and tagging the quote header so we can search for it after it's uploaded.
+f.Intrinsic.Control.CallSub(make_file)
+'parse the quote header and extra data of the spreadsheet
+Function.Intrinsic.Control.CallSub(header)
+
+'parse the line items of the spreadsheet
+Function.Intrinsic.Control.CallSub(lines)
+
+'Call the ORDUPL.lib to do the rest of the data processing will be called from a separate script through online update)
+Function.Intrinsic.Control.CallSub(ORDUPLCreateFile)
+
+'call syncronously
+f.Intrinsic.UI.ChangeWaitStatus("Uploading to Quote.....")
+f.Intrinsic.Control.CallSub(ORDUPLSync)
+
+'quote is uploaded, open the quote.
+f.Intrinsic.Control.CallSub(open_quote)
+
+
+f.Intrinsic.UI.CloseWaitDialog
+
+Function.Intrinsic.Control.CallSub(formFile_unload)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.get_file.End
+
+Program.Sub.header.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local..BulkDeclareString(sError,sRow,sOrderDate,sDueDate,sOverride)
+v.Local.sText.Declare(String)
+v.Local.sField.Declare(String)
+v.Local.iLen.Declare(Long)
+v.Local.sExtra.Declare(String)
+v.Local.iCount.Declare(Long)
+v.Local.iField.Declare(Long)
+v.Local.sTextLine.Declare(String)
+
+'Adding row for header data
+f.Intrinsic.String.Split(v.Global.sSheet(1),"*!*",v.Local.sRow)
+F.Intrinsic.String.DateString(V.Local.sRow(2),V.Local.sOrderDate)
+f.Intrinsic.String.DateString(v.Local.sROW(3),V.Local.sDueDate)
+f.Intrinsic.Control.If(v.Local.sRow(0),">","")
+	v.Local.sOverride.Set("1")
+f.Intrinsic.Control.EndIf
+f.Data.DataTable.AddRow("ORDUPL","Transaction","Q","CustomerNo",V.Local.sRow(4),"OrderNumber",V.Local.sRow(0),"CustomerPO",v.Local.sRow(1),"OrderDate",v.Local.sOrderDate,"OrderDueDate",v.Local.sDueDate,"Salesman",v.Local.sRow(5),"MarkShipment",v.Local.sRow(7),"UserField1Head",v.Local.sRow(15),"UserField2Head",v.Local.sRow(16),"UserField3Head",v.Local.sRow(17),"UserField4Head",v.Local.sRow(18),"UserField5Head",v.Global.sFile,"OverrideAutoNumbering",v.Local.sOverride)
+
+'sort codes go in the UPLExtra table
+F.Data.DataTable.AddRow("ORDUPLExtra","OrderSort",v.local.sRow(8),"OrderSort2",v.Local.sRow(9))
+
+'I put the header and footer records in another datatable to address them both the same way
+'otherwise you have to address one of them in the ORUPLExtra and the other you have to address separately.
+'this way we can get them both out of the way at the same time.
+
+f.Data.DataTable.Create("QUOTE_HF_TEXT",True)
+f.Data.DataTable.AddColumn("QUOTE_HF_TEXT","QUOTE_NO","STRING")
+F.Data.DataTable.AddColumn("QUOTE_HF_TEXT","TEXT","STRING")
+F.Data.DataTable.AddColumn("QUOTE_HF_TEXT","TYPE","STRING")
+F.Data.DataTable.AddColumn("QUOTE_HF_TEXT","ON_SORDR","STRING","1")
+F.Data.DataTable.AddColumn("QUOTE_HF_TEXT","ON_QUOTE","STRING","1")
+'footer text
+f.Intrinsic.Control.If(v.Local.sRow(11),">","")
+	F.Data.DataTable.AddRow("QUOTE_HF_TEXT","TYPE","1","TEXT",v.Local.sRow(11))
+f.Intrinsic.Control.EndIf
+'header text
+f.Intrinsic.Control.If(v.Local.sRow(10),">","")
+	f.Data.DataTable.AddRow("QUOTE_HF_TEXT","TEXT",V.Local.sRow(10))
+f.Intrinsic.Control.EndIf
+
+'quote comments
+f.Data.DataTable.Create("QUOTE_HD_NOTE",True)
+f.Data.DataTable.AddColumn("QUOTE_HD_NOTE","QUOTE_NO","STRING")
+F.Data.DataTable.AddColumn("QUOTE_HD_NOTE","TEXT","STRING")
+F.Intrinsic.Control.If(V.Local.sRow(12),">","")
+	f.Data.DataTable.AddRow("QUOTE_HD_NOTE","TEXT",v.Local.sRow(12))
+F.Intrinsic.Control.EndIf
+
+
+'if there is a quote number assigned manually, that means the quote already exists and they are loading an updated version.
+' we have to purge the old version first
+f.Intrinsic.Control.If(v.Local.sRow(0),">","1")
+	f.Intrinsic.Control.CallSub(purge_old,"quote",v.Local.sRow(0))
+f.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.header.End
+
+Program.Sub.lines.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sRow.Declare(String)
+v.Local.iRow.Declare(Long)
+v.Local.iLine.Declare(Long)
+v.Local.sLine.Declare(String)
+v.Local.iCount.Declare(Long)
+v.Local.iC.Declare(Long)
+v.Local.iLen.Declare(Long)
+v.Local.iText.Declare(Long)
+v.Local.sPart.Declare(String)
+v.Local.sRev.Declare(String)
+v.Local.sDesc.Declare(String)
+v.Local.sPL.Declare(String)
+v.Local.sULine1.Declare(String)
+v.Local.sULine2.Declare(String)
+v.Local.sULine3.Declare(String)
+v.Local.sULine4.Declare(String)
+v.Local.sULine5.Declare(String)
+v.Local.iElement.Declare(Long)
+v.Local.sDate.Declare(String)
+v.Local.sQty.Declare(String)
+v.Local.sPrice.Declare(String)
+v.Local.sText.Declare(String)
+v.Local.sTemp.Declare(String)
+v.Local.bDecimal.Declare(Boolean)
+V.Local.sNote.Declare(String)
+Function.Intrinsic.Debug.InvokeDebugger
+Function.Intrinsic.Debug.Stop
+
+
+'create a data table to hold the NOTES for the line items for later.
+f.Data.DataTable.Create("QUOTE_LN_NOTE",True)
+f.Data.DataTable.AddColumn("QUOTE_LN_NOTE","QUOTE_NO","STRING")
+F.Data.DataTable.AddColumn("QUOTE_LN_NOTE","LINE","STRING")
+F.Data.DataTable.AddColumn("QUOTE_LN_NOTE","TEXT","STRING")
+
+f.Data.DataTable.Create("QUOTE_LN_TEXT",True)
+f.Data.DataTable.AddColumn("QUOTE_LN_TEXT","QUOTE_NUMBER","STRING")
+F.Data.DataTable.AddColumn("QUOTE_LN_TEXT","QUOTE_LINE","STRING")
+F.Data.DataTable.AddColumn("QUOTE_LN_TEXT","QUOTE_TYPE","STRING","9999",4)
+F.Data.DataTable.AddColumn("QUOTE_LN_TEXT","TEXT","STRING")
+
+f.Intrinsic.Control.For(v.local.iCount,3,v.Global.sSheet.UBound++,1)
+
+	f.Intrinsic.String.Split(v.Global.sSheet(v.Local.iCount),"*!*",v.Local.sRow)
+		f.Intrinsic.Control.If(v.Local.sRow(0),">","")
+			v.Local.sPart.Set(v.Local.sRow(0))
+			v.Local.sRev.Set(v.Local.sRow(1))
+			v.Local.sDesc.Set(v.Local.sRow(2))
+			v.Local.sPL.Set(v.Local.sRow(4))
+			v.Local.sULine1.Set(v.Local.sRow(5))
+			v.Local.sULine2.Set(v.Local.sRow(6))
+			v.Local.sULine3.Set(v.Local.sRow(7))
+			v.Local.sULine4.Set(v.Local.sRow(8))
+			v.Local.sULine5.Set(v.Local.sRow(9))
+			f.Intrinsic.Control.For(v.Local.iRow,15,v.Local.sRow.UBound++,5)
+			'array elements 15 through 515 hold the quantities, prices and due dates for each line item (groups of 5 elements)
+				f.Intrinsic.Control.If(v.Local.sRow(v.Local.iRow),">","")
+					f.Intrinsic.Math.Add(v.Local.iLine,1,v.Local.iLine)
+					f.Intrinsic.String.LPad(v.Local.iLine,"0",3,v.Local.sLine)
+					f.Intrinsic.String.DateString(v.Local.sRow(v.Local.iRow),V.Local.sDate)
+					f.Intrinsic.Math.Add(v.Local.iRow,1,v.Local.iElement)
+					v.Local.sQty.Set(v.Local.sRow(v.Local.iElement))
+					f.Intrinsic.math.Add(v.Local.iElement,1,v.Local.iElement)
+					v.Local.sPrice.Set(v.Local.sRow(v.Local.iElement))
+					f.Intrinsic.Math.Add(v.Local.iElement,1,v.Local.iElement)
+					v.Local.sText.Set(v.Local.sRow(v.Local.iElement))
+					f.Intrinsic.Math.Add(v.Local.iElement,1,v.Local.iElement)
+					v.local.sNote.Set(v.Local.sRow(v.Local.iElement))
+					'format quanity and price
+					f.Intrinsic.String.IsInString(v.Local.sQty,".",false,v.Local.bDecimal)
+					f.Intrinsic.Control.If(v.Local.bDecimal,=,True)
+						f.Intrinsic.String.Split(v.Local.sQty,".",v.Local.sTemp)
+						f.Intrinsic.String.LPad(v.Local.sTemp(0),"0",9,v.Local.sTemp(0))
+						f.Intrinsic.String.RPad(v.Local.sTemp(1),"0",4,v.Local.sTemp(1))
+						f.Intrinsic.String.Build("{0}{1}",v.Local.sTemp(0),v.Local.sTemp(1),v.Local.sQty)
+					f.Intrinsic.Control.Else
+						f.Intrinsic.String.LPad(v.Local.sQty,"0",9,v.local.sQty)
+						f.Intrinsic.String.RPad(v.Local.sQty,"0",13,v.Local.sQty)
+					f.Intrinsic.Control.EndIf
+					f.Intrinsic.String.IsInString(v.Local.sPrice,".",false,v.Local.bDecimal)
+					f.Intrinsic.Control.If(v.Local.bDecimal,=,True)
+						f.Intrinsic.String.Split(v.Local.sPrice,".",v.Local.sTemp)
+						f.Intrinsic.String.LPad(v.Local.sTemp(0),"0",10,v.Local.sTemp(0))
+						f.Intrinsic.String.RPad(v.Local.sTemp(1),"0",6,v.Local.sTemp(1))
+						f.Intrinsic.String.Build("{0}{1}",v.Local.sTemp(0),v.Local.sTemp(1),v.Local.sPrice)
+					f.Intrinsic.Control.Else
+						f.Intrinsic.String.LPad(v.Local.sPrice,"0",10,v.Local.sPrice)
+						f.Intrinsic.String.RPad(v.Local.sPrice,"0",16,v.Local.sPrice)
+					f.Intrinsic.Control.EndIf
+					'add the record for upload
+					f.Data.DataTable.AddRow("ORDUPLLines","LineNumber",v.Local.sLine,"QtyOrdered",v.Local.sQty,"PartNumber",v.Local.sPart,"PartRev",v.Local.sRev,"QuotedPrice",v.Local.sPrice,"PartDesc",v.Local.sDesc,"PL",v.Local.sPL,"LinePromiseDate",v.Local.sDate,"UserField1",v.Local.sULine1,"UserField2",v.Local.sULine2,"UserField3",v.Local.sULine3,"UserField4",v.Local.sULine4,"UserField5",v.Local.sUline5)
+
+					'add the line extra text to datatable
+					F.Intrinsic.Control.If(V.Local.sText,">","")
+						f.Intrinsic.String.RPad(v.Local.sLine,"0",4,v.Local.sLine)
+						f.Data.DataTable.AddRow("QUOTE_LN_TEXT","QUOTE_LINE",V.Local.sLine,"TEXT",V.Local.sText)
+					F.Intrinsic.Control.EndIf
+					
+					'add the line notes to the datatable
+					f.Intrinsic.Control.If(v.Local.sNote,">","")
+						F.Intrinsic.String.RPad(V.Local.sLine,"0",4,V.Local.sLine)
+						f.Data.DataTable.AddRow("QUOTE_LN_NOTE","LINE",V.Local.sLine,"TEXT",v.Local.sNote)
+					f.Intrinsic.Control.EndIf
+										
+				f.Intrinsic.Control.Else
+				'if we get to an element that is blank, just leave this loop because there will be no more data for this array.
+					f.Intrinsic.Control.ExitFor(v.Local.iRow)
+				f.Intrinsic.Control.EndIf
+			f.Intrinsic.Control.Next(v.Local.iRow)
+			
+			'row elements 13 and 14 tell us we need to add quote lines after the part# we just finished processing.
+			'(14) > "" denotes they need a TOOLING line added.  (10) is the line text, (14) is the cost
+			f.Intrinsic.Control.If(v.Local.sRow(14),">","")
+				f.Intrinsic.Math.Add(v.Local.iLine,1,v.Local.iLine)
+				f.Intrinsic.String.LPad(v.Local.iLine,"0",3,v.Local.sLine)
+				v.Local.sPrice.Set(v.Local.sRow(14))
+				v.Local.sPart.Set("TOOLING")
+				V.Local.sText.Set(v.Local.sRow(10))
+				f.Intrinsic.String.DateString(V.Local.sRow(15),V.Local.sDate)
+				f.Data.DataTable.AddRow("ORDUPLLines","LineNumber",V.Local.sLine,"QtyOrdered","1","PartNumber",V.Local.sPart,"QuotedPrice",V.Local.sPrice,"LinePromiseDate",v.Local.sDate,"TextLine1",v.Local.sText)				
+			f.Intrinsic.Control.EndIf
+			'(13) > "" denotes they need a NRE line added.  (10) is the description, (13) is the cost
+			f.Intrinsic.Control.If(v.Local.sRow(13),">","")
+				f.Intrinsic.Math.Add(v.Local.iLine,1,v.Local.iLine)
+				f.Intrinsic.String.LPad(v.Local.iLine,"0",3,v.Local.sLine)
+				v.Local.sPrice.Set(v.Local.sRow(13))
+				v.Local.sPart.Set("NRE")
+				V.Local.sText.Set(v.Local.sRow(10))
+				f.Intrinsic.String.DateString(V.Local.sRow(15),V.Local.sDate)
+				f.Data.DataTable.AddRow("ORDUPLLines","LineNumber",V.Local.sLine,"QtyOrdered","1","PartNumber",V.Local.sPart,"QuotedPrice",V.Local.sPrice,"LinePromiseDate",v.Local.sDate,"TextLine1",v.Local.sText)				
+			f.Intrinsic.Control.EndIf
+		f.Intrinsic.Control.Else
+			'because the format of the spreadsheet is importing 8,000 rows.  For this reason, when a row element 0 returns blank, we're done. Exit the loop.
+			f.Intrinsic.Control.ExitFor(v.Local.iCount)
+		f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Next(v.local.iCount)
+Function.Intrinsic.Debug.Stop
+
+f.Intrinsic.UI.ChangeWaitStatus("Building upload file.....")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.lines.End
+
+Program.Sub.make_file.Start
+F.Intrinsic.Control.SetErrorHandler("Sub_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sFile.Declare(String)
+v.Local.sDate.Declare(String)
+v.Local.sTime.Declare(String)
+
+f.Intrinsic.String.DateString(v.Ambient.Date,V.Local.sDate)
+f.Intrinsic.String.TimeString(v.Ambient.Time,V.Local.sTime)
+
+'define the file name we're going to pass to the lib file
+f.Intrinsic.String.Build("{0}{1}{2}.txt",v.Caller.User,v.Local.sDate,v.Local.sTime,v.Global.sFile)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Sub_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.make_file.End
+
+Program.Sub.purge_old.Start
+F.Intrinsic.Control.SetErrorHandler("Purge_Old_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sParams.Declare(String)
+v.Local.sSql.Declare(String)
+V.Local.sQuote.Declare(String)
+'set the local variable
+f.Intrinsic.String.LPad(v.Args.quote,"0",7,v.Local.sQuote)
+
+'build queries, and purge the old version of the quote
+
+f.Intrinsic.String.Build("delete from QTE_HD_NOTE where QUOTE_NO = '{0}';",v.local.sQuote,v.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+f.Intrinsic.String.Build("delete from QTE_LN_NOTE where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+F.Intrinsic.String.Build("delete from QUOTE_BILL_TO where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+F.Intrinsic.String.Build("delete from QUOTE_HEADER where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+f.Intrinsic.String.Build("delete from QUOTE_HF_TEXT where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+f.Intrinsic.String.Build("delete from QUOTE_LINES where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+F.Intrinsic.String.Build("delete from QUOTE_LN_TEXT where QUOTE_NUMBER = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+f.Intrinsic.String.Build("delete from QUOTE_SHIP_SCHED where ORDER_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+F.Intrinsic.String.Build("delete from QUOTE_SHIP_TO where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+F.Intrinsic.String.Build("delete from QUOTE_TAX where QUOTE_NO = '{0}';",v.local.sQuote,V.Local.sSql)
+F.ODBC.Connection!conx.execute(v.Local.sSql)
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Purge_Old_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.purge_old.End
+
+Program.Sub.open_quote.Start
+F.Intrinsic.Control.SetErrorHandler("Open_Quote_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sSql.Declare(String)
+V.Local.sRet.Declare(String)
+
+
+f.Intrinsic.String.Build("select QUOTE_NO from V_QUOTE_HEADER where USER_5 = '{0}'",V.Global.sFile,V.Local.sSql)
+f.ODBC.Connection!conx.executeandreturn(v.Local.sSql,v.Local.sRet)
+
+
+'now that the quote has been uploaded and we found the quote number, we need to upload the header/footer and the line notes
+F.Intrinsic.Control.CallSub(upload_notes,"QUOTE",V.Local.sRet)
+
+f.data.DataTable.AddRow("251000","QuoteNo",v.Local.sRet,"Mode","O")
+f.Intrinsic.Control.CallSub(251000ASync)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Open_Quote_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project:  GCG_4794_QUOTE_IMPORT",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.open_quote.End
+
+Program.Sub.upload_notes.Start
+F.Intrinsic.Control.SetErrorHandler("Upload_Notes_Err")
+F.Intrinsic.Control.ClearErrors
+
+
+V.Local.sError.Declare(String)
+
+
+
+'quote header/footer text
+f.Intrinsic.Control.If(v.DataTable.QUOTE_HF_TEXT.RowCount,">",0)
+	F.Data.DataTable.SetValue("QUOTE_HF_TEXT",-1,"QUOTE_NO",V.Args.QUOTE)
+	f.Data.DataTable.SaveToDB("QUOTE_HF_TEXT","conx","QUOTE_HF_TEXT","QUOTE_NO",128)
+f.Intrinsic.Control.EndIf
+
+'quote header notes
+f.Intrinsic.Control.If(v.DataTable.QUOTE_HD_NOTE.RowCount,">",0)
+	f.Data.DataTable.SetValue("QUOTE_HD_NOTE",-1,"QUOTE_NO",V.Args.QUOTE)
+	F.Data.DataTable.SaveToDB("QUOTE_HD_NOTE","conx","QTE_HD_NOTE","QUOTE_NO",128)
+f.Intrinsic.Control.EndIf
+
+'quote line text
+f.Intrinsic.Control.If(v.DataTable.QUOTE_LN_TEXT.RowCount,">",0)
+	f.Data.DataTable.SetValue("QUOTE_LN_TEXT",-1,"QUOTE_NUMBER",v.Args.QUOTE)
+	F.Data.DataTable.SaveToDB("QUOTE_LN_TEXT","conx","QUOTE_LN_TEXT","QUOTE_NUMBER*!*QUOTE_LINE",128)
+f.Intrinsic.Control.EndIf
+
+'quote line notes
+f.Intrinsic.Control.If(v.DataTable.QUOTE_LN_NOTE.RowCount,">",0)
+	F.Data.DataTable.SetValue("QUOTE_LN_NOTE",-1,"QUOTE_NO",v.Args.QUOTE)
+	f.Data.DataTable.SaveToDB("QUOTE_LN_NOTE","conx","QTE_LN_NOTE","QUOTE_NO*!*LINE",128)
+f.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Upload_Notes_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: Project",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+Program.Sub.upload_notes.End
